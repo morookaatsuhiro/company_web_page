@@ -17,8 +17,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- 本站样式 -->
-  <link href="css/main.css" rel="stylesheet">
+  <!-- 本站样式（由 FastAPI 同端口托管时用 /static/ 前缀） -->
+  <link href="/static/css/main.css" rel="stylesheet">
 </head>
 
 <body data-bs-spy="scroll" data-bs-target="#topnav" data-bs-offset="90" tabindex="0">
@@ -28,7 +28,7 @@
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="#top">
         <span class="brand-mark"><i class="bi bi-lightning-charge-fill"></i></span>
-        <span>EIHO / 衛宝</span>
+        <span id="navBrandText">EIHO / 衛宝</span>
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,13 +37,13 @@
 
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-          <li class="nav-item"><a class="nav-link" href="#concept">トップ</a></li>
-          <li class="nav-item"><a class="nav-link" href="#services">事業内容</a></li>
-          <li class="nav-item"><a class="nav-link" href="#strengths">強み</a></li>
-          <li class="nav-item"><a class="nav-link" href="#profile">会社概要</a></li>
+          <li class="nav-item"><a class="nav-link" href="#concept"><span id="navTopText">トップ</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#services"><span id="navServicesText">事業内容</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#strengths"><span id="navStrengthsText">強み</span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#profile"><span id="navProfileText">会社概要</span></a></li>
           <li class="nav-item ms-lg-2">
             <a class="btn btn-sm btn-brand text-white" href="#contact">
-              お問合わせ <i class="bi bi-arrow-right-short"></i>
+              <span id="navCtaText">お問合わせ</span> <i class="bi bi-arrow-right-short"></i>
             </a>
           </li>
         </ul>
@@ -52,43 +52,43 @@
   </nav>
 
   <!-- ===== HERO ===== -->
-  <header id="top" class="hero">
+  <header id="top" class="hero" data-hero>
     <div class="container py-5">
       <div class="kicker">
         <i class="bi bi-globe2"></i>
-        <span>Japan × China | Automotive Trading</span>
+        <span id="heroKickerText">Japan × China | Automotive Trading</span>
       </div>
 
-      <h1>
+      <h1 id="heroTitle">
         品質と情熱で、日中のカーライフを繋ぐ架け橋へ
       </h1>
 
-      <p>
+      <p id="heroSubtitle">
         株式会社衛宝（EIHO Co., Ltd.）は、日本と中国という世界最大級の自動車市場を結ぶ貿易のエキスパートです。
         厳選された高品質な自動車用品の輸入・輸出を通じて、ドライバーの皆様に「安心・快適・楽しさ」をお届けすることを使命としています。
       </p>
 
       <div class="d-flex flex-wrap gap-2 mt-4">
         <a class="btn btn-brand text-white" href="#services">
-          事業内容を見る <i class="bi bi-arrow-right-short"></i>
+          <span id="heroPrimaryCtaText">事業内容を見る</span> <i class="bi bi-arrow-right-short"></i>
         </a>
         <a class="btn btn-ghost" href="#profile">
-          会社概要 <i class="bi bi-building"></i>
+          <span id="heroSecondaryCtaText">会社概要</span> <i class="bi bi-building"></i>
         </a>
       </div>
 
       <div class="hero-cards">
-        <div class="hero-card">
-          <div class="num"><span class="countup" data-to="2">0</span>国間</div>
-          <div class="label">日中の調達・販売を一気通貫</div>
+        <div class="hero-card" data-hero-stat="0">
+          <div class="num"><span class="countup" data-to="2">0</span><span data-hero-stat-suffix>国間</span></div>
+          <div class="label" data-hero-stat-label>日中の調達・販売を一気通貫</div>
         </div>
-        <div class="hero-card">
-          <div class="num"><span class="countup" data-to="3">0</span>領域</div>
-          <div class="label">輸入 / 輸出 / OEM・コンサル</div>
+        <div class="hero-card" data-hero-stat="1">
+          <div class="num"><span class="countup" data-to="3">0</span><span data-hero-stat-suffix>領域</span></div>
+          <div class="label" data-hero-stat-label>輸入 / 輸出 / OEM・コンサル</div>
         </div>
-        <div class="hero-card">
-          <div class="num"><span class="countup" data-to="100">0</span>%</div>
-          <div class="label">品質基準に向けた検品体制</div>
+        <div class="hero-card" data-hero-stat="2">
+          <div class="num"><span class="countup" data-to="100">0</span><span data-hero-stat-suffix>%</span></div>
+          <div class="label" data-hero-stat-label>品質基準に向けた検品体制</div>
         </div>
       </div>
     </div>
@@ -99,28 +99,28 @@
     <div class="container">
       <div class="row align-items-center g-4">
         <div class="col-lg-6">
-          <h2 class="section-title">トップメッセージ（コンセプト）</h2>
-          <p class="section-sub mt-3">
+          <h2 id="conceptTitle" class="section-title">トップメッセージ（コンセプト）</h2>
+          <p id="conceptSubtitle" class="section-sub mt-3">
             私たちは「貿易＝運ぶ」だけではなく、「信頼＝つなぐ」ことを重視します。
             現地ネットワークの強みと、日本基準の品質管理を掛け合わせ、安心して選べるカー用品を届け続けます。
           </p>
 
           <ul class="mt-4 mb-0 text-secondary">
-            <li class="mb-2"><strong>安心：</strong>検品・規格・品質の可視化</li>
-            <li class="mb-2"><strong>快適：</strong>機能性・耐久性・コスパの両立</li>
-            <li class="mb-2"><strong>楽しさ：</strong>カーライフを彩るアクセサリー提案</li>
+            <li class="mb-2"><strong id="conceptPoint0Label">安心：</strong><span id="conceptPoint0Body">検品・規格・品質の可視化</span></li>
+            <li class="mb-2"><strong id="conceptPoint1Label">快適：</strong><span id="conceptPoint1Body">機能性・耐久性・コスパの両立</span></li>
+            <li class="mb-2"><strong id="conceptPoint2Label">楽しさ：</strong><span id="conceptPoint2Body">カーライフを彩るアクセサリー提案</span></li>
           </ul>
         </div>
 
         <div class="col-lg-6">
           <div class="p-4 p-lg-5 bg-white rounded-4 shadow-sm border border-brand-light">
-            <h5 class="fw-bold text-brand mb-2">Mission</h5>
-            <p class="mb-4 text-secondary">
+            <h5 id="missionTitle" class="fw-bold text-brand mb-2">Mission</h5>
+            <p id="missionBody" class="mb-4 text-secondary">
               高品質な自動車用品の輸出入を通じて、日中市場の価値循環を加速させます。
             </p>
 
-            <h5 class="fw-bold text-brand mb-2">Vision</h5>
-            <p class="mb-0 text-secondary">
+            <h5 id="visionTitle" class="fw-bold text-brand mb-2">Vision</h5>
+            <p id="visionBody" class="mb-0 text-secondary">
               「品質と情熱」で、日中カーライフの架け橋となるグローバル・パートナーへ。
             </p>
           </div>
@@ -132,12 +132,13 @@
   <!-- ===== SERVICES ===== -->
   <section id="services">
     <div class="container">
-      <h2 class="section-title">事業内容（Our Services）</h2>
-      <p class="section-sub mt-2">
+      <h2 id="servicesTitle" class="section-title">事業内容（Our Services）</h2>
+      <p id="servicesSubtitle" class="section-sub mt-2">
         輸入・輸出・OEM/コンサルまで、日中ビジネスをトータルに支援します。
       </p>
 
-      <div class="row g-4 mt-3">
+      <!-- 由 js/home-data.js 从接口 /api/public/home 填充；无接口时显示下方静态内容 -->
+      <div id="servicesWrap" class="row g-4 mt-3">
         <div class="col-lg-4">
           <div class="card svc-card p-4">
             <div class="icon mb-3"><i class="bi bi-box-seam"></i></div>
@@ -177,12 +178,12 @@
   <!-- ===== STRENGTHS ===== -->
   <section id="strengths" class="soft-bg">
     <div class="container">
-      <h2 class="section-title">当社の強み（Why Choose Us?）</h2>
-      <p class="section-sub mt-2">
+      <h2 id="strengthsTitle" class="section-title">当社の強み（Why Choose Us?）</h2>
+      <p id="strengthsSubtitle" class="section-sub mt-2">
         スピード・品質・柔軟性。日中ビジネスに必要な“実務力”で差をつけます。
       </p>
 
-      <div class="row g-4 mt-3">
+      <div id="strengthsWrap" class="row g-4 mt-3">
         <div class="col-lg-4">
           <div class="strength-item">
             <div class="d-flex align-items-center gap-2 mb-2">
@@ -225,15 +226,15 @@
   <!-- ===== PROFILE ===== -->
   <section id="profile">
     <div class="container">
-      <h2 class="section-title">会社概要（Company Profile）</h2>
-      <p class="section-sub mt-2">
+      <h2 id="profileTitle" class="section-title">会社概要（Company Profile）</h2>
+      <p id="profileSubtitle" class="section-sub mt-2">
         以下はテンプレートです。住所・代表者・設立年月などを差し替えてそのまま使えます。
       </p>
 
       <div class="profile mt-4">
         <div class="profile-head d-flex flex-wrap justify-content-between align-items-center gap-3">
           <div>
-            <div class="fw-bold fs-5">株式会社 衛宝（EIHO Co., Ltd.）</div>
+            <div id="companyNameHead" class="fw-bold fs-5">株式会社 衛宝（EIHO Co., Ltd.）</div>
             <div class="text-secondary">Auto Accessories / Parts Trading between Japan & China</div>
           </div>
           <a class="btn btn-sm btn-outline-primary btn-outline-brand" href="#contact">
@@ -246,24 +247,24 @@
             <tbody>
               <tr>
                 <th>名称</th>
-                <td>株式会社 衛宝（EIHO Co., Ltd.）</td>
+                <td id="companyName">株式会社 衛宝（EIHO Co., Ltd.）</td>
               </tr>
               <tr>
                 <th>所在地</th>
-                <td>〒000-0000　[都道府県・住所を入力]</td>
+                <td id="companyAddress">〒000-0000　[都道府県・住所を入力]</td>
               </tr>
               <tr>
                 <th>代表者</th>
-                <td>[代表者名を入力]</td>
+                <td id="companyRepresentative">[代表者名を入力]</td>
               </tr>
               <tr>
                 <th>設立</th>
-                <td>[設立年・月を入力]</td>
+                <td id="companyEstablished">[設立年・月を入力]</td>
               </tr>
               <tr>
                 <th>事業内容</th>
                 <td>
-                  <ul class="mb-0">
+                  <ul id="businessDesc" class="mb-0">
                     <li>自動車関連部品および自動車用品、カーアクセサリーの輸出入及び販売</li>
                     <li>卸売</li>
                     <li>コンサルティング・OEM受託（市場調査／製品開発支援）</li>
@@ -272,7 +273,7 @@
               </tr>
               <tr>
                 <th>主要取引先</th>
-                <td>日本国内のカーショップ、中国国内の製造メーカー、各商社</td>
+                <td id="companyClients">日本国内のカーショップ、中国国内の製造メーカー、各商社</td>
               </tr>
             </tbody>
           </table>
@@ -288,16 +289,16 @@
       <div class="cta">
         <div class="row align-items-center g-3">
           <div class="col-lg-8">
-            <h3 class="fw-bold mb-1">日中貿易・OEMのご相談はこちら</h3>
-            <p>
+            <h3 id="ctaTitle" class="fw-bold mb-1">日中貿易・OEMのご相談はこちら</h3>
+            <p id="ctaSubtitle">
               小ロットのテスト導入から量産・仕様調整まで。まずは要件だけでもお聞かせください。
             </p>
           </div>
           <div class="col-lg-4 text-lg-end">
             <a class="btn btn-light fw-bold px-4 py-3 rounded-4" href="mailto:info@example.com">
-              メールで問い合わせ <i class="bi bi-envelope"></i>
+              <span id="ctaButtonText">メールで問い合わせ</span> <i class="bi bi-envelope"></i>
             </a>
-            <div class="small mt-2">
+            <div id="ctaPhoneText" class="small mt-2">
               または：03-0000-0000（平日 9:00–18:00）
             </div>
           </div>
@@ -307,7 +308,7 @@
       <div class="row g-4 mt-4">
         <div class="col-lg-6">
           <div class="p-4 bg-white rounded-4 shadow-sm border border-brand-light">
-            <h5 class="fw-bold mb-3 text-brand">お問い合わせフォーム（ダミー）</h5>
+            <h5 id="contactFormTitle" class="fw-bold mb-3 text-brand">お問い合わせフォーム（ダミー）</h5>
 
             <form id="contactForm" class="row g-3">
               <div class="col-md-6">
@@ -334,7 +335,7 @@
               </div>
             </form>
 
-            <div class="small text-secondary mt-3">
+            <div id="contactFormNote" class="small text-secondary mt-3">
               ※このフォームはデモです（送信は行いません）。実運用ではバックエンド（例：Node/PHP/Django等）に接続してください。
             </div>
           </div>
@@ -342,8 +343,8 @@
 
         <div class="col-lg-6">
           <div class="p-4 bg-white rounded-4 shadow-sm border border-brand-light h-100">
-            <h5 class="fw-bold mb-3 text-brand">対応可能なご相談例</h5>
-            <ul class="mb-0 text-secondary">
+            <h5 id="contactExamplesTitle" class="fw-bold mb-3 text-brand">対応可能なご相談例</h5>
+            <ul id="contactExamplesList" class="mb-0 text-secondary">
               <li class="mb-2">日本向け：カーアクセサリー／機能パーツの輸入（小ロット〜）</li>
               <li class="mb-2">中国向け：Made in Japan用品の輸出・販路開拓</li>
               <li class="mb-2">OEM：仕様策定、パッケージ、品質基準、検品設計</li>
@@ -356,8 +357,8 @@
                 <i class="bi bi-geo-alt fs-4"></i>
               </div>
               <div>
-                <div class="fw-bold">アクセス</div>
-                <div class="text-secondary">〒000-0000 [都道府県・住所を入力]</div>
+                <div id="accessTitle" class="fw-bold">アクセス</div>
+                <div id="accessAddress" class="text-secondary">〒000-0000 [都道府県・住所を入力]</div>
               </div>
             </div>
           </div>
@@ -370,11 +371,11 @@
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <div class="container d-flex flex-wrap gap-2 justify-content-between align-items-center">
-      <div>© <span id="year"></span> EIHO Co., Ltd. All rights reserved.</div>
+      <div>© <span id="year"></span> <span id="footerCopyrightText">EIHO Co., Ltd. All rights reserved.</span></div>
       <div class="d-flex gap-3">
-        <a href="#top">TOP</a>
-        <a href="#services">Services</a>
-        <a href="#profile">Profile</a>
+        <a id="footerLinkTop" href="#top">TOP</a>
+        <a id="footerLinkServices" href="#services">Services</a>
+        <a id="footerLinkProfile" href="#profile">Profile</a>
       </div>
     </div>
   </footer>
@@ -382,6 +383,8 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- 本站脚本 -->
-  <script src="js/main.js"></script>
+  <script src="/static/js/main.js"></script>
+  <!-- 从后台 /api/public/home 拉取首页数据并填充 hero / services -->
+  <script src="/static/js/home-data.js"></script>
 </body>
 </html>
