@@ -31,15 +31,70 @@
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ===== Fake form submit =====
+  // ===== Contact form submit =====
   const contactForm = document.getElementById('contactForm');
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const msg = document.getElementById('formMsg');
-      if (msg) msg.textContent = '送信しました（デモ）。担当より折り返しご連絡します。';
-      e.target.reset();
-      setTimeout(() => { if (msg) msg.textContent = ''; }, 4500);
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      const setMsg = (text, isError = false) => {
+        if (!msg) return;
+        msg.textContent = text;
+        msg.classList.toggle('text-danger', isError);
+        msg.classList.toggle('text-success', !isError);
+      };
+
+      if (contactForm.dataset.submitting === '1') return;
+      contactForm.dataset.submitting = '1';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '送信中...';
+      }
+      setMsg('送信中...');
+
+      const formData = new FormData(contactForm);
+      const payload = {
+        name: String(formData.get('name') || '').trim(),
+        company: String(formData.get('company') || '').trim(),
+        email: String(formData.get('email') || '').trim(),
+        message: String(formData.get('message') || '').trim()
+      };
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch (_) {
+          data = null;
+        }
+
+        if (!res.ok) {
+          const errMsg = (data && (data.detail || data.message)) || '送信に失敗しました。しばらくしてから再度お試しください。';
+          setMsg(errMsg, true);
+          return;
+        }
+
+        const okMsg = (data && data.message) || '送信しました。担当より折り返しご連絡します。';
+        setMsg(okMsg, false);
+        e.target.reset();
+        setTimeout(() => { if (msg) msg.textContent = ''; }, 4500);
+      } catch (_) {
+        setMsg('送信に失敗しました。通信状況をご確認ください。', true);
+      } finally {
+        delete contactForm.dataset.submitting;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+      }
     });
   }
 

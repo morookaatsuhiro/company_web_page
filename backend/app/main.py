@@ -9,18 +9,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
 
 from .db import Base, engine, get_db
 from .crud import get_or_create_home, update_home
-from .schemas import HomePublic, HomeUpdate
+from .schemas import HomePublic, HomeUpdate, ContactRequest
 from .admin_views import router as admin_router
 from .auth import is_logged_in
+from .mail import send_contact_email
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parents[2]  # 指向 web_page_company 项目根目录
+ENV_PATH = BASE_DIR / "backend" / ".env"
+if ENV_PATH.exists():
+    load_dotenv(dotenv_path=str(ENV_PATH))
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
@@ -141,6 +146,24 @@ def admin_update_home(payload: HomeUpdate, request: Request, db: Session = Depen
     except Exception as e:
         logger.error(f"Error updating home data: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to update home data")
+
+
+@app.post("/api/contact")
+def submit_contact(payload: ContactRequest):
+    """联系表单：发送邮件给管理员"""
+    try:
+        send_contact_email(
+            name=payload.name,
+            company=payload.company,
+            email=payload.email,
+            message=payload.message,
+        )
+        return {"ok": True}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Failed to send contact email: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to send email")
 
 
 @app.exception_handler(404)

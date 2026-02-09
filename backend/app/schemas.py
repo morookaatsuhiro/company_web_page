@@ -135,3 +135,10 @@ class HomeUpdate(BaseModel):
     footer_link_top: Optional[str] = None
     footer_link_services: Optional[str] = None
     footer_link_profile: Optional[str] = None
+
+
+class ContactRequest(BaseModel):
+    name: str
+    company: Optional[str] = None
+    email: str
+    message: str

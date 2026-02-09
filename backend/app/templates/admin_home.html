@@ -56,23 +56,23 @@
               <input id="nav_brand_text" name="nav_brand_text" value="{{ home.nav_brand_text or '' }}" placeholder="EIHO / 衛宝">
             </div>
             <div>
-              <label for="nav_top_text">导航：顶部</label>
+              <label for="nav_top_text">顶部</label>
               <input id="nav_top_text" name="nav_top_text" value="{{ home.nav_top_text or '' }}" placeholder="トップ">
             </div>
             <div>
-              <label for="nav_services_text">导航：事業内容</label>
+              <label for="nav_services_text">事業内容</label>
               <input id="nav_services_text" name="nav_services_text" value="{{ home.nav_services_text or '' }}" placeholder="事業内容">
             </div>
             <div>
-              <label for="nav_strengths_text">导航：強み</label>
+              <label for="nav_strengths_text">強み</label>
               <input id="nav_strengths_text" name="nav_strengths_text" value="{{ home.nav_strengths_text or '' }}" placeholder="強み">
             </div>
             <div>
-              <label for="nav_profile_text">导航：会社概要</label>
+              <label for="nav_profile_text">会社概要</label>
               <input id="nav_profile_text" name="nav_profile_text" value="{{ home.nav_profile_text or '' }}" placeholder="会社概要">
             </div>
             <div>
-              <label for="nav_cta_text">导航 CTA</label>
+              <label for="nav_cta_text">CTA</label>
               <input id="nav_cta_text" name="nav_cta_text" value="{{ home.nav_cta_text or '' }}" placeholder="お問合わせ">
             </div>
           </div>
@@ -550,6 +550,27 @@
   </template>
 
   <template id="strengthItemTpl">
+    <div class="item-row">
+      <div class="item-fields">
+        <div>
+          <label>标题</label>
+          <input name="strengths_title" value="" placeholder="例如：独自のネットワーク" title="强项标题">
+        </div>
+        <div>
+          <label>内容</label>
+          <textarea name="strengths_body" placeholder="强项内容" title="强项内容"></textarea>
+        </div>
+        <div>
+          <label>图标（可选）</label>
+          <input name="strengths_icon" value="" placeholder="diagram-3-fill" title="Bootstrap Icons 名称">
+        </div>
+      </div>
+      <div class="item-actions">
+        <button type="button" class="btn btn-danger" data-remove>删除</button>
+      </div>
+    </div>
+  </template>
+
   <template id="heroStatItemTpl">
     <div class="item-row">
       <div class="item-fields compact">
@@ -596,26 +617,6 @@
         <div>
           <label>示例</label>
           <input name="contact_example_text" value="" placeholder="日本向け：カーアクセサリー...">
-        </div>
-      </div>
-      <div class="item-actions">
-        <button type="button" class="btn btn-danger" data-remove>删除</button>
-      </div>
-    </div>
-  </template>
-    <div class="item-row">
-      <div class="item-fields">
-        <div>
-          <label>标题</label>
-          <input name="strengths_title" value="" placeholder="例如：独自のネットワーク" title="强项标题">
-        </div>
-        <div>
-          <label>内容</label>
-          <textarea name="strengths_body" placeholder="强项内容" title="强项内容"></textarea>
-        </div>
-        <div>
-          <label>图标（可选）</label>
-          <input name="strengths_icon" value="" placeholder="diagram-3-fill" title="Bootstrap Icons 名称">
         </div>
       </div>
       <div class="item-actions">
