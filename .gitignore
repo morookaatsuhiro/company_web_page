@@ -8,3 +8,4 @@ Thumbs.db
 # 本地环境（若有）
 .env
 .env.local
+".env*" 
