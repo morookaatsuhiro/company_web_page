@@ -6,7 +6,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # 支持环境变量配置数据库 URL（生产环境可用 PostgreSQL）
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./eiho.db")
+# Vercel 的只读文件系统会导致本地 sqlite 写入失败，默认改用 /tmp。
+def _default_database_url() -> str:
+    if os.getenv("VERCEL") == "1" or os.getenv("VERCEL_ENV"):
+        return "sqlite:////tmp/eiho.db"
+    return "sqlite:///./eiho.db"
+
+
+DATABASE_URL = os.getenv("DATABASE_URL", _default_database_url())
 
 # SQLite 需要 check_same_thread=False，PostgreSQL/MySQL 不需要
 connect_args = {}
