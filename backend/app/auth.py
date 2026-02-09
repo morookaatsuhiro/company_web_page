@@ -4,6 +4,7 @@
 import os
 import base64
 import hashlib
+import hmac
 from itsdangerous import URLSafeSerializer
 from fastapi import Request
 
@@ -49,7 +50,7 @@ def verify_password(password: str, stored: str) -> bool:
             salt = decode_b64(salt_b64)
             dk_expected = decode_b64(dk_b64)
             dk = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
-            return hashlib.compare_digest(dk, dk_expected)
+            return hmac.compare_digest(dk, dk_expected)
         except Exception as e:
             # 调试：打印错误（生产环境应移除）
             import logging
