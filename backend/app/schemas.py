@@ -25,6 +25,8 @@ class ConceptPointItem(BaseModel):
 class HomePublic(BaseModel):
     nav_brand_text: str
     nav_top_text: str
+    nav_concept_text: str
+    nav_news_text: str
     nav_services_text: str
     nav_strengths_text: str
     nav_profile_text: str
@@ -82,6 +84,8 @@ class HomePublic(BaseModel):
 class HomeUpdate(BaseModel):
     nav_brand_text: Optional[str] = None
     nav_top_text: Optional[str] = None
+    nav_concept_text: Optional[str] = None
+    nav_news_text: Optional[str] = None
     nav_services_text: Optional[str] = None
     nav_strengths_text: Optional[str] = None
     nav_profile_text: Optional[str] = None

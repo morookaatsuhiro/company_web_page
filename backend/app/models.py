@@ -10,6 +10,8 @@ class HomePage(Base):
     # Nav
     nav_brand_text = Column(String(255), default="EIHO / 衛宝")
     nav_top_text = Column(String(100), default="トップ")
+    nav_concept_text = Column(String(100), default="メッセージ")
+    nav_news_text = Column(String(100), default="ニュース")
     nav_services_text = Column(String(100), default="事業内容")
     nav_strengths_text = Column(String(100), default="強み")
     nav_profile_text = Column(String(100), default="会社概要")
@@ -25,7 +27,7 @@ class HomePage(Base):
     hero_stats_json = Column(Text, default="[]")
 
     # Concept
-    concept_title = Column(String(255), default="トップメッセージ（コンセプト）")
+    concept_title = Column(String(255), default="メッセージ（コンセプト）")
     concept_subtitle = Column("concept_body", Text, default="")
     concept_points_json = Column(Text, default="[]")
     mission_title = Column(String(100), default="Mission")

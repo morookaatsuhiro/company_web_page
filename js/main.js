@@ -16,16 +16,54 @@
   window.addEventListener('scroll', onScroll);
   onScroll();
 
-  // ===== Close mobile menu after click (nav-link, btn, brand logo) =====
+  // ===== Nav active/aria sync + close mobile menu =====
   const navLinks = document.querySelectorAll('.navbar .nav-link, .navbar .btn, .navbar-brand');
+  const navAnchorLinks = Array.from(document.querySelectorAll('.navbar .nav-link[href^="#"]'));
   const navCollapse = document.getElementById('navMenu');
-  navLinks.forEach(a => {
+
+  const syncNavAriaCurrent = () => {
+    navAnchorLinks.forEach((link) => {
+      if (link.classList.contains('active')) {
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  const activateNavLink = (linkEl) => {
+    if (!linkEl) return;
+    navAnchorLinks.forEach((link) => link.classList.remove('active'));
+    linkEl.classList.add('active');
+    syncNavAriaCurrent();
+  };
+
+  navLinks.forEach((a) => {
     a.addEventListener('click', () => {
+      if (a.classList.contains('nav-link')) {
+        const href = a.getAttribute('href') || '';
+        if (href.startsWith('#')) activateNavLink(a);
+      } else if (a.classList.contains('navbar-brand')) {
+        const topLink = document.querySelector('.navbar .nav-link[href="#top"]');
+        activateNavLink(topLink);
+      }
+
       if (navCollapse && navCollapse.classList.contains('show')) {
         bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
       }
     });
   });
+
+  const spyRoot = document.querySelector('[data-bs-spy="scroll"]');
+  if (spyRoot) {
+    spyRoot.addEventListener('activate.bs.scrollspy', syncNavAriaCurrent);
+  }
+  if (!document.querySelector('.navbar .nav-link.active')) {
+    const topLink = document.querySelector('.navbar .nav-link[href="#top"]');
+    activateNavLink(topLink);
+  } else {
+    syncNavAriaCurrent();
+  }
 
   // ===== Footer year =====
   const yearEl = document.getElementById('year');

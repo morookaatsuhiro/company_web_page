@@ -38,19 +38,17 @@
     .item-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
     .item-actions .btn{padding:6px 10px;font-weight:700;}
     .news-wrap{margin-top:18px;}
-    .news-meta{display:flex;gap:8px;align-items:center;font-size:12px;color:#6b7280;}
+    .news-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:#6b7280;}
     .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#3f51b5;font-weight:700;font-size:11px;}
+    .news-panel{border:1px solid #dce6f6;border-radius:14px;background:#f8fbff;padding:12px;margin-top:10px;}
+    .news-panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+    .news-panel-title h4{margin:0;font-size:17px;}
     .news-create{background:#fff;border:1px solid #dfe7f3;}
     .news-create-title{margin:0 0 4px;font-size:18px;color:#1f2a37;}
     .news-create-subtitle{margin:0 0 12px;color:#667085;font-size:13px;}
-    .news-create-grid{display:block;}
+    .news-create-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;}
     .news-main-fields{display:grid;grid-template-columns:1fr;gap:12px;}
-    .news-side-panel{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:10px;
-    }
+    .news-side-panel{display:grid;grid-template-columns:1fr;gap:10px;align-content:start;}
     .news-upload-card{
       border:1px solid #dbe5f3;
       border-radius:10px;
@@ -58,12 +56,19 @@
       padding:10px;
     }
     .news-upload-card label{display:block;margin-bottom:4px;}
-    .news-publish-check{display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;}
+    .news-publish-check{display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;margin-top:6px;}
     .news-publish-check input[type="checkbox"]{width:auto;margin:0;}
     .news-create .item-actions{margin-top:12px;justify-content:flex-start;}
-    .news-item{background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);}
+    .news-list-wrap{display:grid;gap:10px;}
+    .news-item{background:#fff;border:1px solid #dfe7f3;}
+    .news-item-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-top:8px;}
+    .news-side-fields{display:grid;gap:10px;align-content:start;}
+    .news-publish-inline{display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;margin-top:6px;}
+    .news-publish-inline input[type="checkbox"]{width:auto;margin:0;}
+    .news-item .item-actions{border-top:1px solid #eef2f8;padding-top:10px;margin-top:10px;}
     @media (max-width: 900px){
-      .news-side-panel{grid-template-columns:1fr;}
+      .news-create-grid{grid-template-columns:1fr;}
+      .news-item-grid{grid-template-columns:1fr;}
     }
   </style>
 </head>
@@ -90,6 +95,14 @@
             <div>
               <label for="nav_top_text">顶部</label>
               <input id="nav_top_text" name="nav_top_text" value="{{ home.nav_top_text or '' }}" placeholder="トップ">
+            </div>
+            <div>
+              <label for="nav_concept_text">メッセージ</label>
+              <input id="nav_concept_text" name="nav_concept_text" value="{{ home.nav_concept_text or '' }}" placeholder="メッセージ">
+            </div>
+            <div>
+              <label for="nav_news_text">ニュース</label>
+              <input id="nav_news_text" name="nav_news_text" value="{{ home.nav_news_text or '' }}" placeholder="ニュース">
             </div>
             <div>
               <label for="nav_services_text">事業内容</label>
@@ -202,7 +215,7 @@
           <div class="grid">
             <div class="full">
               <label for="concept_title">区块标题</label>
-              <input id="concept_title" name="concept_title" value="{{ home.concept_title or '' }}" placeholder="トップメッセージ（コンセプト）">
+              <input id="concept_title" name="concept_title" value="{{ home.concept_title or '' }}" placeholder="メッセージ（コンセプト）">
             </div>
             <div class="full">
               <label for="concept_subtitle">区块描述</label>
@@ -278,90 +291,102 @@
         <summary><span class="section-title">ニュース管理</span></summary>
         <div class="section-body">
           <div class="hint">主页只显示已发布新闻标题，点击进入详情页。</div>
-          <div class="item-row news-create">
-            <h4 class="news-create-title">新建ニュース</h4>
-            <p class="news-create-subtitle">先完成标题和正文，再设置图片、附件和发布状态。</p>
-            <div class="news-create-grid">
-              <div class="news-main-fields">
-                <div>
-                <label>标题</label>
-                <input name="title" placeholder="例：展示会出展のお知らせ" title="新闻标题">
+          <div class="news-panel">
+            <div class="news-panel-title">
+              <h4>新建ニュース</h4>
+              <span class="hint">填写完成后点击创建</span>
+            </div>
+            <div class="item-row news-create">
+              <p class="news-create-subtitle">先完成标题和正文，再设置图片、附件和发布状态。</p>
+              <div class="news-create-grid">
+                <div class="news-main-fields">
+                  <div>
+                    <label>标题</label>
+                    <input name="title" placeholder="例：展示会出展のお知らせ" title="新闻标题">
+                  </div>
+                  <div>
+                    <label>正文</label>
+                    <textarea name="body" class="textarea-tall" placeholder="这里输入正文内容" title="新闻正文"></textarea>
+                    <div class="hint">建议首段概述核心信息，后续分段补充时间、地点、对象与联系方式。</div>
+                  </div>
                 </div>
-                <div>
-                <label>正文</label>
-                <textarea name="body" class="textarea-tall" placeholder="这里输入正文内容" title="新闻正文"></textarea>
-                <div class="hint">建议首段概述核心信息，后续分段补充时间、地点、对象与联系方式。</div>
+                <div class="news-side-panel">
+                  <div class="news-upload-card">
+                    <label>图片（可选）</label>
+                    <input type="file" name="image" accept="image/*" title="新闻图片">
+                  </div>
+                  <div class="news-upload-card">
+                    <label>附件（可选）</label>
+                    <input type="file" name="attachment" title="新闻附件">
+                  </div>
+                  <div class="news-upload-card">
+                    <label>发布状态</label>
+                    <label class="news-publish-check"><input type="checkbox" name="is_published" title="发布状态"> 立即发布</label>
+                    <div class="hint">未勾选将保存为草稿，可在下方列表中再编辑并发布。</div>
+                  </div>
+                </div>
               </div>
+              <div class="item-actions">
+                <button class="btn" type="button" data-news-create>创建</button>
               </div>
-            </div>
-            <div class="news-side-panel">
-              <div class="news-upload-card">
-                <label>图片（可选）</label>
-                <input type="file" name="image" accept="image/*" title="新闻图片">
-              </div>
-              <div class="news-upload-card">
-                <label>附件（可选）</label>
-                <input type="file" name="attachment" title="新闻附件">
-              </div>
-              <div class="news-upload-card">
-                <label>发布状态</label>
-                <label class="news-publish-check"><input type="checkbox" name="is_published" title="发布状态"> 立即发布</label>
-                <div class="hint">未勾选将保存为草稿，可在下方列表中再编辑并发布。</div>
-              </div>
-            </div>
-            <div class="item-actions">
-              <button class="btn" type="button" data-news-create>创建</button>
             </div>
           </div>
 
-          <div class="item-row">
-            <h4 class="card-title">已创建ニュース</h4>
+          <div class="news-panel">
+            <div class="news-panel-title">
+              <h4>已创建ニュース</h4>
+              <span class="hint">支持修改后保存或删除</span>
+            </div>
             {% if news_items and news_items|length > 0 %}
-              {% for n in news_items %}
-                <div class="item-row news-item" data-news-id="{{ n.id }}">
-                  <div class="news-meta">
-                    <span class="badge">ID {{ n.id }}</span>
-                    {% if n.is_published %}<span class="badge">公開中</span>{% else %}<span class="badge">非公開</span>{% endif %}
-                    <span>详情页：<a href="/news/{{ n.id }}" target="_blank">/news/{{ n.id }}</a></span>
-                  </div>
-                  <div class="item-fields one">
-                    <div>
-                      <label>标题</label>
-                      <input name="title" value="{{ n.title }}" title="新闻标题">
+              <div class="news-list-wrap">
+                {% for n in news_items %}
+                  <div class="item-row news-item" data-news-id="{{ n.id }}">
+                    <div class="news-meta">
+                      <span class="badge">ID {{ n.id }}</span>
+                      {% if n.is_published %}<span class="badge">公開中</span>{% else %}<span class="badge">非公開</span>{% endif %}
+                      <span>详情页：<a href="/news/{{ n.id }}" target="_blank">/news/{{ n.id }}</a></span>
                     </div>
-                    <div>
-                      <label>正文</label>
-                      <textarea name="body" class="textarea-tall" title="新闻正文">{{ n.body or '' }}</textarea>
-                    </div>
-                    <div class="grid">
-                      <div>
-                        <label>图片</label>
-                        {% if n.image_path %}
-                          <div class="hint"><a href="{{ n.image_path }}" target="_blank">当前图片</a></div>
-                        {% endif %}
-                        <input type="file" name="image" accept="image/*" title="新闻图片">
+                    <div class="news-item-grid">
+                      <div class="item-fields one">
+                        <div>
+                          <label>标题</label>
+                          <input name="title" value="{{ n.title }}" title="新闻标题">
+                        </div>
+                        <div>
+                          <label>正文</label>
+                          <textarea name="body" class="textarea-tall" title="新闻正文">{{ n.body or '' }}</textarea>
+                        </div>
                       </div>
-                      <div>
-                        <label>附件</label>
-                        {% if n.file_path %}
-                          <div class="hint"><a href="{{ n.file_path }}" target="_blank">当前附件</a></div>
-                        {% endif %}
-                        <input type="file" name="attachment" title="新闻附件">
-                      </div>
-                      <div>
-                        <label>发布</label>
-                        <div class="hint">
-                          <input type="checkbox" name="is_published" title="发布状态" {% if n.is_published %}checked{% endif %}> 已发布
+                      <div class="news-side-fields">
+                        <div class="news-upload-card">
+                          <label>图片</label>
+                          {% if n.image_path %}
+                            <div class="hint"><a href="{{ n.image_path }}" target="_blank">当前图片</a></div>
+                          {% endif %}
+                          <input type="file" name="image" accept="image/*" title="新闻图片">
+                        </div>
+                        <div class="news-upload-card">
+                          <label>附件</label>
+                          {% if n.file_path %}
+                            <div class="hint"><a href="{{ n.file_path }}" target="_blank">当前附件</a></div>
+                          {% endif %}
+                          <input type="file" name="attachment" title="新闻附件">
+                        </div>
+                        <div class="news-upload-card">
+                          <label>发布状态</label>
+                          <label class="news-publish-inline">
+                            <input type="checkbox" name="is_published" title="发布状态" {% if n.is_published %}checked{% endif %}> 已发布
+                          </label>
                         </div>
                       </div>
                     </div>
+                    <div class="item-actions">
+                      <button class="btn btn-outline" type="button" data-news-update>保存</button>
+                      <button class="btn btn-danger" type="button" data-news-delete>删除</button>
+                    </div>
                   </div>
-                  <div class="item-actions">
-                    <button class="btn btn-outline" type="button" data-news-update>保存</button>
-                    <button class="btn btn-danger" type="button" data-news-delete>删除</button>
-                  </div>
-                </div>
-              {% endfor %}
+                {% endfor %}
+              </div>
             {% else %}
               <div class="hint">暂无新闻</div>
             {% endif %}

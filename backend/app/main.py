@@ -12,7 +12,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 
-from .db import Base, engine, get_db
+from .db import Base, engine, get_db, ensure_homepage_nav_columns
 from .crud import get_or_create_home, update_home, list_published_news, get_news
 from .schemas import HomePublic, HomeUpdate, ContactRequest, NewsPublic
 from .admin_views import router as admin_router
@@ -32,6 +32,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
+ensure_homepage_nav_columns()
 
 # 创建 FastAPI 应用
 app = FastAPI(
@@ -83,6 +84,8 @@ def public_home(db: Session = Depends(get_db)):
         return HomePublic(
             nav_brand_text=home.nav_brand_text or "",
             nav_top_text=home.nav_top_text or "",
+            nav_concept_text=home.nav_concept_text or "メッセージ",
+            nav_news_text=home.nav_news_text or "ニュース",
             nav_services_text=home.nav_services_text or "",
             nav_strengths_text=home.nav_strengths_text or "",
             nav_profile_text=home.nav_profile_text or "",

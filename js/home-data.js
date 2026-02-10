@@ -30,6 +30,8 @@
     // Nav
     setText("#navBrandText", data.nav_brand_text);
     setText("#navTopText", data.nav_top_text);
+    setText("#navConceptText", data.nav_concept_text);
+    setText("#navNewsText", data.nav_news_text);
     setText("#navServicesText", data.nav_services_text);
     setText("#navStrengthsText", data.nav_strengths_text);
     setText("#navProfileText", data.nav_profile_text);
@@ -63,22 +65,21 @@
     };
 
     const heroStats = Array.isArray(data.hero_stats) ? data.hero_stats : [];
-    if (heroStats.length > 0) {
-      document.querySelectorAll("[data-hero-stat]").forEach((el) => {
-        const index = parseInt(el.getAttribute("data-hero-stat"), 10);
-        const stat = heroStats[index];
-        if (!stat) return;
-        const countEl = el.querySelector(".countup");
-        const suffixEl = el.querySelector("[data-hero-stat-suffix]");
-        const labelEl = el.querySelector("[data-hero-stat-label]");
-        const value = parseInt(stat.value, 10);
-        if (countEl && !Number.isNaN(value)) {
-          countEl.dataset.to = String(value);
-          countEl.textContent = String(value);
-        }
-        if (suffixEl && stat.suffix) suffixEl.textContent = stat.suffix;
-        if (labelEl && stat.label) labelEl.textContent = stat.label;
-      });
+    const heroCardsWrap = document.querySelector(".hero-cards");
+    if (heroCardsWrap && heroStats.length > 0) {
+      heroCardsWrap.innerHTML = heroStats
+        .map((stat) => {
+          const value = Number.parseInt(stat?.value, 10);
+          const safeValue = Number.isNaN(value) ? 0 : value;
+          const suffix = escapeHtml(String(stat?.suffix || ""));
+          const label = escapeHtml(String(stat?.label || ""));
+          return `
+<div class="hero-card">
+  <div class="num"><span class="countup" data-to="${safeValue}">${safeValue}</span><span>${suffix}</span></div>
+  <div class="label">${label}</div>
+</div>`;
+        })
+        .join("");
     }
 
     // Concept / Mission / Vision
@@ -107,9 +108,21 @@
               .map(item => {
                 const title = escapeHtml(item.title || "");
                 const url = item.url || "#";
-                return `<li class="mb-2"><a href="${url}">${title}</a></li>`;
+                return `
+<a class="news-card-link" href="${url}">
+  <article class="news-card">
+    <div class="news-card-title">${title}</div>
+    <div class="news-card-meta">詳細を見る <i class="bi bi-arrow-right-short"></i></div>
+  </article>
+</a>`;
               })
               .join("");
+          } else {
+            newsList.innerHTML = `
+<article class="news-card news-empty">
+  <div class="news-card-title">現在、ニュースはありません。</div>
+  <div class="news-card-meta">新しいお知らせが公開されると、ここに表示されます。</div>
+</article>`;
           }
         }
       } catch (_) {

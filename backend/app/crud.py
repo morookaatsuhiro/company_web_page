@@ -14,6 +14,8 @@ def get_or_create_home(db: Session) -> HomePage:
         home = HomePage(
             nav_brand_text="EIHO / 衛宝",
             nav_top_text="トップ",
+            nav_concept_text="メッセージ",
+            nav_news_text="ニュース",
             nav_services_text="事業内容",
             nav_strengths_text="強み",
             nav_profile_text="会社概要",
@@ -23,7 +25,7 @@ def get_or_create_home(db: Session) -> HomePage:
             hero_subtitle="株式会社衛宝（EIHO Co., Ltd.）は、日本と中国という世界最大級の自動車市場を結ぶ貿易のエキスパートです。\n厳選された高品質な自動車用品の輸入・輸出を通じて、ドライバーの皆様に「安心・快適・楽しさ」をお届けすることを使命としています。",
             hero_primary_cta="事業内容を見る",
             hero_secondary_cta="会社概要",
-            concept_title="トップメッセージ（コンセプト）",
+            concept_title="メッセージ（コンセプト）",
             concept_subtitle="私たちは「貿易＝運ぶ」だけではなく、「信頼＝つなぐ」ことを重視します。\n現地ネットワークの強みと、日本基準の品質管理を掛け合わせ、安心して選べるカー用品を届け続けます。",
             mission_title="Mission",
             mission_body="高品質な自動車用品の輸出入を通じて、日中市場の価値循環を加速させます。",
