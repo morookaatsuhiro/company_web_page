@@ -215,6 +215,127 @@ section { padding: 88px 0; }
   white-space: pre-wrap;
 }
 
+.news-page .news-hero {
+  padding-top: 96px;
+  padding-bottom: 96px;
+}
+
+.news-page .news-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(11, 59, 102, 0.12);
+  border-radius: 24px;
+  padding: clamp(1.5rem, 2.6vw, 2.5rem);
+  box-shadow: 0 26px 60px rgba(11, 59, 102, 0.12);
+  overflow: hidden;
+}
+
+.news-page .news-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(39, 179, 255, 0.08), transparent 40%);
+  pointer-events: none;
+}
+
+.news-page .news-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.news-page .news-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.news-page .news-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-2);
+  background: rgba(15, 94, 166, 0.12);
+}
+
+.news-page .news-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.news-page .news-title {
+  font-size: clamp(2rem, 3.2vw, 3.1rem);
+  font-weight: 900;
+  color: #0b2f53;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.news-page .news-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.news-page .news-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand-2);
+  box-shadow: 0 0 0 4px rgba(15, 94, 166, 0.15);
+}
+
+.news-page .news-media {
+  margin-top: 1.5rem;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(11, 59, 102, 0.08);
+  background: #f2f6fb;
+  display: flex;
+  justify-content: center;
+}
+
+.news-page .news-image {
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+}
+
+.news-page .news-body {
+  margin-top: 1.5rem;
+  color: var(--text);
+  line-height: 1.95;
+  font-size: 1.08rem;
+  white-space: pre-wrap;
+}
+
+.news-page .news-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.news-page .btn-ghost {
+  border: 1px solid rgba(15, 94, 166, 0.2);
+  color: var(--brand-2);
+  background: rgba(15, 94, 166, 0.08);
+}
+
 .profile-head {
   background: linear-gradient(135deg, rgba(15, 94, 166, .10), rgba(39, 179, 255, .10));
   padding: 1.4rem 1.4rem;
