@@ -253,89 +253,81 @@
         <summary><span class="section-title">ニュース管理</span></summary>
         <div class="section-body">
           <div class="hint">主页只显示已发布新闻标题，点击进入详情页。</div>
-          <div class="item-row">
+          <div class="item-row news-create">
             <h4 class="card-title">新建ニュース</h4>
-            <form method="post" action="/admin/news/create" enctype="multipart/form-data">
-              <div class="grid">
-                <div class="full">
-                  <label>标题</label>
-                  <input name="title" placeholder="例：展示会出展のお知らせ" title="新闻标题" required>
-                </div>
-                <div class="full">
-                  <label>正文</label>
-                  <textarea name="body" class="textarea-tall" placeholder="这里输入正文内容" title="新闻正文"></textarea>
-                </div>
-                <div>
-                  <label>图片（可选）</label>
-                  <input type="file" name="image" accept="image/*" title="新闻图片">
-                </div>
-                <div>
-                  <label>附件（可选）</label>
-                  <input type="file" name="attachment" title="新闻附件">
-                </div>
-                <div>
-                  <label>发布</label>
-                  <div class="hint"><input type="checkbox" name="is_published" title="发布状态"> 勾选即发布</div>
-                </div>
+            <div class="grid">
+              <div class="full">
+                <label>标题</label>
+                <input name="title" placeholder="例：展示会出展のお知らせ" title="新闻标题">
               </div>
-              <div class="item-actions">
-                <button class="btn" type="submit">创建</button>
+              <div class="full">
+                <label>正文</label>
+                <textarea name="body" class="textarea-tall" placeholder="这里输入正文内容" title="新闻正文"></textarea>
               </div>
-            </form>
+              <div>
+                <label>图片（可选）</label>
+                <input type="file" name="image" accept="image/*" title="新闻图片">
+              </div>
+              <div>
+                <label>附件（可选）</label>
+                <input type="file" name="attachment" title="新闻附件">
+              </div>
+              <div>
+                <label>发布</label>
+                <div class="hint"><input type="checkbox" name="is_published" title="发布状态"> 勾选即发布</div>
+              </div>
+            </div>
+            <div class="item-actions">
+              <button class="btn" type="button" data-news-create>创建</button>
+            </div>
           </div>
 
           <div class="item-row">
             <h4 class="card-title">已创建ニュース</h4>
             {% if news_items and news_items|length > 0 %}
               {% for n in news_items %}
-                <div class="item-row">
+                <div class="item-row news-item" data-news-id="{{ n.id }}">
                   <div class="news-meta">
                     <span class="badge">ID {{ n.id }}</span>
                     {% if n.is_published %}<span class="badge">公開中</span>{% else %}<span class="badge">非公開</span>{% endif %}
                     <span>详情页：<a href="/news/{{ n.id }}" target="_blank">/news/{{ n.id }}</a></span>
                   </div>
-                  <form method="post" action="/admin/news/update/{{ n.id }}" enctype="multipart/form-data">
-                    <div class="item-fields one">
+                  <div class="item-fields one">
+                    <div>
+                      <label>标题</label>
+                      <input name="title" value="{{ n.title }}" title="新闻标题">
+                    </div>
+                    <div>
+                      <label>正文</label>
+                      <textarea name="body" class="textarea-tall" title="新闻正文">{{ n.body or '' }}</textarea>
+                    </div>
+                    <div class="grid">
                       <div>
-                        <label>标题</label>
-                        <input name="title" value="{{ n.title }}" title="新闻标题" required>
+                        <label>图片</label>
+                        {% if n.image_path %}
+                          <div class="hint"><a href="{{ n.image_path }}" target="_blank">当前图片</a></div>
+                        {% endif %}
+                        <input type="file" name="image" accept="image/*" title="新闻图片">
                       </div>
                       <div>
-                        <label>正文</label>
-                        <textarea name="body" class="textarea-tall" title="新闻正文">{{ n.body or '' }}</textarea>
+                        <label>附件</label>
+                        {% if n.file_path %}
+                          <div class="hint"><a href="{{ n.file_path }}" target="_blank">当前附件</a></div>
+                        {% endif %}
+                        <input type="file" name="attachment" title="新闻附件">
                       </div>
-                      <div class="grid">
-                        <div>
-                          <label>图片</label>
-                          {% if n.image_path %}
-                            <div class="hint"><a href="{{ n.image_path }}" target="_blank">当前图片</a></div>
-                          {% endif %}
-                          <input type="file" name="image" accept="image/*" title="新闻图片">
-                        </div>
-                        <div>
-                          <label>附件</label>
-                          {% if n.file_path %}
-                            <div class="hint"><a href="{{ n.file_path }}" target="_blank">当前附件</a></div>
-                          {% endif %}
-                          <input type="file" name="attachment" title="新闻附件">
-                        </div>
-                        <div>
-                          <label>发布</label>
-                          <div class="hint">
-                            <input type="checkbox" name="is_published" title="发布状态" {% if n.is_published %}checked{% endif %}> 已发布
-                          </div>
+                      <div>
+                        <label>发布</label>
+                        <div class="hint">
+                          <input type="checkbox" name="is_published" title="发布状态" {% if n.is_published %}checked{% endif %}> 已发布
                         </div>
                       </div>
                     </div>
-                    <div class="item-actions">
-                      <button class="btn btn-outline" type="submit">保存</button>
-                    </div>
-                  </form>
-                  <form method="post" action="/admin/news/delete/{{ n.id }}" onsubmit="return confirm('确定删除此新闻吗？');">
-                    <div class="item-actions">
-                      <button class="btn btn-danger" type="submit">删除</button>
-                    </div>
-                  </form>
+                  </div>
+                  <div class="item-actions">
+                    <button class="btn btn-outline" type="button" data-news-update>保存</button>
+                    <button class="btn btn-danger" type="button" data-news-delete>删除</button>
+                  </div>
                 </div>
               {% endfor %}
             {% else %}
@@ -758,7 +750,50 @@
         const row = target.closest(".item-row");
         if (row) row.remove();
       }
+      if (target.matches("[data-news-create]")) {
+        const root = target.closest(".news-create");
+        if (!root) return;
+        submitNewsForm("/admin/news/create", root);
+      }
+      if (target.matches("[data-news-update]")) {
+        const root = target.closest(".news-item");
+        if (!root) return;
+        const id = root.getAttribute("data-news-id");
+        if (!id) return;
+        submitNewsForm(`/admin/news/update/${id}`, root);
+      }
+      if (target.matches("[data-news-delete]")) {
+        const root = target.closest(".news-item");
+        if (!root) return;
+        const id = root.getAttribute("data-news-id");
+        if (!id) return;
+        if (!confirm("确定删除此新闻吗？")) return;
+        fetch(`/admin/news/delete/${id}`, { method: "POST" })
+          .then(() => window.location.reload())
+          .catch(() => alert("删除失败，请稍后再试"));
+      }
     });
+
+    const submitNewsForm = (url, root) => {
+      const title = root.querySelector('input[name="title"]')?.value?.trim() || "";
+      if (!title) {
+        alert("请填写标题");
+        return;
+      }
+      const fd = new FormData();
+      fd.append("title", title);
+      const body = root.querySelector('textarea[name="body"]')?.value || "";
+      fd.append("body", body);
+      const image = root.querySelector('input[name="image"]')?.files?.[0];
+      const attachment = root.querySelector('input[name="attachment"]')?.files?.[0];
+      if (image) fd.append("image", image);
+      if (attachment) fd.append("attachment", attachment);
+      const isPublished = root.querySelector('input[name="is_published"]')?.checked;
+      if (isPublished) fd.append("is_published", "on");
+      fetch(url, { method: "POST", body: fd })
+        .then(() => window.location.reload())
+        .catch(() => alert("提交失败，请稍后再试"));
+    };
   </script>
 </body>
 </html>
