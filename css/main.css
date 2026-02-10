@@ -205,6 +205,16 @@ section { padding: 88px 0; }
   overflow: hidden;
 }
 
+/* News detail */
+.news-detail-image {
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.news-detail-body {
+  white-space: pre-wrap;
+}
+
 .profile-head {
   background: linear-gradient(135deg, rgba(15, 94, 166, .10), rgba(39, 179, 255, .10));
   padding: 1.4rem 1.4rem;

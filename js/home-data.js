@@ -95,6 +95,28 @@
     setText("#visionTitle", data.vision_title);
     setMultilineText("#visionBody", data.vision_body);
 
+    // News list (separate API)
+    const newsList = document.querySelector("#newsList");
+    if (newsList) {
+      try {
+        const newsRes = await fetch("/api/public/news");
+        if (newsRes.ok) {
+          const newsData = await newsRes.json();
+          if (Array.isArray(newsData) && newsData.length > 0) {
+            newsList.innerHTML = newsData
+              .map(item => {
+                const title = escapeHtml(item.title || "");
+                const url = item.url || "#";
+                return `<li class="mb-2"><a href="${url}">${title}</a></li>`;
+              })
+              .join("");
+          }
+        }
+      } catch (_) {
+        /* ignore news errors */
+      }
+    }
+
     // Section headings
     setText("#servicesTitle", data.services_section_title);
     setMultilineText("#servicesSubtitle", data.services_section_subtitle);
