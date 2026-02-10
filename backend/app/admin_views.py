@@ -12,6 +12,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from .db import get_db
 from .crud import get_or_create_home, update_home, list_news, create_news, update_news, delete_news
+from .github_storage import github_enabled, upload_to_github
 from .auth import ADMIN_USER, ADMIN_PASS_HASH, verify_password, create_session_token, is_logged_in
 from .schemas import HomeUpdate, ServiceItem, StrengthItem, HeroStatItem, ConceptPointItem
 
@@ -104,7 +105,7 @@ UPLOAD_BASE = Path(__file__).resolve().parents[2] / "uploads" / "news"
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
-def _save_upload(upload: UploadFile | None) -> str:
+def _save_local_upload(upload: UploadFile | None) -> str:
     if not upload or not upload.filename:
         return ""
     ext = Path(upload.filename).suffix
@@ -114,6 +115,14 @@ def _save_upload(upload: UploadFile | None) -> str:
     with target.open("wb") as f:
         shutil.copyfileobj(upload.file, f)
     return f"/static/uploads/news/{filename}"
+
+
+def _store_upload(upload: UploadFile | None) -> str:
+    if not upload or not upload.filename:
+        return ""
+    if github_enabled():
+        return upload_to_github(upload, folder="news")
+    return _save_local_upload(upload)
 
 
 @router.get("/admin/login", response_class=HTMLResponse)
@@ -367,8 +376,8 @@ def admin_create_news(
         return RedirectResponse(url="/admin/login", status_code=302)
     if not title.strip():
         return RedirectResponse(url="/admin?error=news_title_required", status_code=302)
-    image_path = _save_upload(image)
-    file_path = _save_upload(attachment)
+    image_path = _store_upload(image)
+    file_path = _store_upload(attachment)
     create_news(
         db,
         title=title,
@@ -395,8 +404,8 @@ def admin_update_news(
         return RedirectResponse(url="/admin/login", status_code=302)
     if not title.strip():
         return RedirectResponse(url="/admin?error=news_title_required", status_code=302)
-    image_path = _save_upload(image) if image and image.filename else None
-    file_path = _save_upload(attachment) if attachment and attachment.filename else None
+    image_path = _store_upload(image) if image and image.filename else None
+    file_path = _store_upload(attachment) if attachment and attachment.filename else None
     update_news(
         db,
         news_id=news_id,
