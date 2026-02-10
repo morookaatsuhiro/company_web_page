@@ -49,14 +49,20 @@
     setText("#heroPrimaryCtaText", data.hero_primary_cta);
     setText("#heroSecondaryCtaText", data.hero_secondary_cta);
 
-    // Hero 背景图（可选）
+    // Hero 背景图（可选，支持最多 5 张，逗号/换行分隔）
     const heroSection = document.querySelector("[data-hero]");
-    if (heroSection && data.hero_bg_image) {
-      heroSection.style.backgroundImage =
-        `radial-gradient(1200px 500px at 20% 25%, rgba(39,179,255,.18), transparent 60%),` +
-        `radial-gradient(900px 400px at 80% 30%, rgba(15,94,166,.18), transparent 55%),` +
-        `linear-gradient(180deg, rgba(10,15,22,.15), rgba(10,15,22,.85)),` +
-        `url("${data.hero_bg_image}")`;
+    const heroSlides = Array.from(document.querySelectorAll("[data-hero-bg-slide]"));
+    if (heroSection && heroSlides.length > 0 && data.hero_bg_image) {
+      const bgImages = String(data.hero_bg_image)
+        .split(/[\r\n,]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+      if (bgImages.length > 0) {
+        heroSlides.forEach((slide, index) => {
+          const imageUrl = bgImages[index % bgImages.length];
+          slide.style.backgroundImage = `url("${imageUrl}")`;
+        });
+      }
     }
 
     const normalizeIcon = (icon, fallback) => {
