@@ -2,14 +2,16 @@
 后台管理视图：登录、登出、内容编辑
 """
 import json
+import shutil
+import uuid
 from pathlib import Path
 from typing import List, Type, Optional
-from fastapi import APIRouter, Request, Depends, Form
+from fastapi import APIRouter, Request, Depends, Form, UploadFile, File
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from .db import get_db
-from .crud import get_or_create_home, update_home
+from .crud import get_or_create_home, update_home, list_news, create_news, update_news, delete_news
 from .auth import ADMIN_USER, ADMIN_PASS_HASH, verify_password, create_session_token, is_logged_in
 from .schemas import HomeUpdate, ServiceItem, StrengthItem, HeroStatItem, ConceptPointItem
 
@@ -98,7 +100,20 @@ def _parse_contact_examples(examples_json: str) -> list:
             out.append(item)
     return out
 BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_BASE = Path(__file__).resolve().parents[2] / "uploads" / "news"
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+
+
+def _save_upload(upload: UploadFile | None) -> str:
+    if not upload or not upload.filename:
+        return ""
+    ext = Path(upload.filename).suffix
+    filename = f"{uuid.uuid4().hex}{ext}"
+    UPLOAD_BASE.mkdir(parents=True, exist_ok=True)
+    target = UPLOAD_BASE / filename
+    with target.open("wb") as f:
+        shutil.copyfileobj(upload.file, f)
+    return f"/static/uploads/news/{filename}"
 
 
 @router.get("/admin/login", response_class=HTMLResponse)
@@ -151,6 +166,7 @@ def admin_home(request: Request, db: Session = Depends(get_db)):
             "hero_stats": _parse_hero_stats(home.hero_stats_json or "[]"),
             "concept_points": _parse_concept_points(home.concept_points_json or "[]"),
             "contact_examples": _parse_contact_examples(home.contact_examples_json or "[]"),
+            "news_items": list_news(db),
         })
     except Exception as e:
         return templates.TemplateResponse(
@@ -335,3 +351,71 @@ def admin_save(
         return RedirectResponse(url="/admin?success=1", status_code=302)
     except Exception as e:
         return RedirectResponse(url="/admin?error=save_failed", status_code=302)
+
+
+@router.post("/admin/news/create")
+def admin_create_news(
+    request: Request,
+    db: Session = Depends(get_db),
+    title: str = Form(""),
+    body: str = Form(""),
+    is_published: Optional[str] = Form(None),
+    image: UploadFile | None = File(None),
+    attachment: UploadFile | None = File(None),
+):
+    if not is_logged_in(request):
+        return RedirectResponse(url="/admin/login", status_code=302)
+    if not title.strip():
+        return RedirectResponse(url="/admin?error=news_title_required", status_code=302)
+    image_path = _save_upload(image)
+    file_path = _save_upload(attachment)
+    create_news(
+        db,
+        title=title,
+        body=body,
+        image_path=image_path,
+        file_path=file_path,
+        is_published=bool(is_published),
+    )
+    return RedirectResponse(url="/admin?news=created", status_code=302)
+
+
+@router.post("/admin/news/update/{news_id}")
+def admin_update_news(
+    news_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    title: str = Form(""),
+    body: str = Form(""),
+    is_published: Optional[str] = Form(None),
+    image: UploadFile | None = File(None),
+    attachment: UploadFile | None = File(None),
+):
+    if not is_logged_in(request):
+        return RedirectResponse(url="/admin/login", status_code=302)
+    if not title.strip():
+        return RedirectResponse(url="/admin?error=news_title_required", status_code=302)
+    image_path = _save_upload(image) if image and image.filename else None
+    file_path = _save_upload(attachment) if attachment and attachment.filename else None
+    update_news(
+        db,
+        news_id=news_id,
+        title=title,
+        body=body,
+        image_path=image_path,
+        file_path=file_path,
+        is_published=bool(is_published),
+    )
+    return RedirectResponse(url="/admin?news=updated", status_code=302)
+
+
+@router.post("/admin/news/delete/{news_id}")
+def admin_delete_news(
+    news_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    if not is_logged_in(request):
+        return RedirectResponse(url="/admin/login", status_code=302)
+    delete_news(db, news_id)
+    return RedirectResponse(url="/admin?news=deleted", status_code=302)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
 from sqlalchemy.sql import func
 from .db import Base
 
@@ -73,4 +73,17 @@ class HomePage(Base):
     footer_link_services = Column(String(100), default="Services")
     footer_link_profile = Column(String(100), default="Profile")
 
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class News(Base):
+    __tablename__ = "news"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=False)
+    body = Column(Text, default="")
+    image_path = Column(String(500), default="")
+    file_path = Column(String(500), default="")
+    is_published = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

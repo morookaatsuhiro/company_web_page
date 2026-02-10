@@ -5,34 +5,41 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>EIHO Admin</title>
   <style>
-    body{font-family:system-ui;background:#f6f7fb;margin:0;padding:24px;}
+    body{font-family:system-ui;background:linear-gradient(180deg,#f6f7fb 0%,#eef2f7 100%);margin:0;padding:24px;color:#1f2a37;}
     .top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto 12px;}
     .wrap{max-width:1200px;margin:0 auto;}
-    .card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.08);}
+    .card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.08);border:1px solid #eef0f4;}
+    .card-title{margin:0 0 8px;font-size:18px;}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
     .full{grid-column:1/-1;}
     .section{border:1px solid #eef0f4;border-radius:16px;margin-bottom:16px;background:#fff;}
-    .section summary{cursor:pointer;font-weight:800;font-size:16px;padding:14px 16px;list-style:none;}
+    .section summary{cursor:pointer;font-weight:800;font-size:16px;padding:14px 16px;list-style:none;background:#f7f9fc;border-bottom:1px solid #eef0f4;}
     .section summary::-webkit-details-marker{display:none;}
     .section-body{padding:0 16px 16px;}
     .section-title{display:flex;align-items:center;justify-content:space-between;margin:0;}
     label{font-weight:700;color:#333;font-size:13px;}
-    input,textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:12px;margin-top:6px;}
+    input,textarea{width:100%;padding:10px 12px;border:1px solid #d6dbe6;border-radius:12px;margin-top:6px;background:#fff;}
+    input:focus,textarea:focus{outline:none;border-color:#0f5ea6;box-shadow:0 0 0 3px rgba(15,94,166,.12);}
     textarea{min-height:92px;resize:vertical;}
     textarea.textarea-tall{min-height:160px;}
     .form-actions{display:flex;gap:10px;align-items:center;}
-    .btn{padding:10px 14px;border:0;border-radius:12px;background:#0f5ea6;color:#fff;font-weight:800;cursor:pointer;}
+    .btn{padding:10px 14px;border:0;border-radius:12px;background:#0f5ea6;color:#fff;font-weight:800;cursor:pointer;transition:transform .06s ease,box-shadow .2s ease;}
+    .btn:hover{box-shadow:0 6px 18px rgba(15,94,166,.18);}
+    .btn:active{transform:translateY(1px);}
     .btn-outline{background:#fff;color:#0f5ea6;border:1px solid #0f5ea6;}
     .btn-danger{background:#fff;color:#c62828;border:1px solid #c62828;}
     .hint{color:#666;font-size:12px;margin-top:4px;}
     a{color:#0f5ea6;text-decoration:none;font-weight:700;}
-    .item-row{border:1px solid #eee;border-radius:12px;padding:12px;margin-top:10px;background:#fafbff;}
+    .item-row{border:1px solid #eef0f4;border-radius:12px;padding:12px;margin-top:10px;background:#fafbff;}
     .item-fields{display:grid;grid-template-columns:1fr 2fr 1fr;gap:10px;}
     .item-fields.compact{grid-template-columns:1fr 1fr 2fr;}
     .item-fields.simple{grid-template-columns:1fr 2fr;}
     .item-fields.one{grid-template-columns:1fr;}
     .item-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
     .item-actions .btn{padding:6px 10px;font-weight:700;}
+    .news-wrap{margin-top:18px;}
+    .news-meta{display:flex;gap:8px;align-items:center;font-size:12px;color:#6b7280;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#3f51b5;font-weight:700;font-size:11px;}
   </style>
 </head>
 <body>
@@ -238,6 +245,102 @@
               <label for="vision_body">Vision 内容</label>
               <textarea id="vision_body" name="vision_body">{{ home.vision_body or '' }}</textarea>
             </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="section" open>
+        <summary><span class="section-title">ニュース管理</span></summary>
+        <div class="section-body">
+          <div class="hint">主页只显示已发布新闻标题，点击进入详情页。</div>
+          <div class="item-row">
+            <h4 class="card-title">新建ニュース</h4>
+            <form method="post" action="/admin/news/create" enctype="multipart/form-data">
+              <div class="grid">
+                <div class="full">
+                  <label>标题</label>
+                  <input name="title" placeholder="例：展示会出展のお知らせ" title="新闻标题" required>
+                </div>
+                <div class="full">
+                  <label>正文</label>
+                  <textarea name="body" class="textarea-tall" placeholder="这里输入正文内容" title="新闻正文"></textarea>
+                </div>
+                <div>
+                  <label>图片（可选）</label>
+                  <input type="file" name="image" accept="image/*" title="新闻图片">
+                </div>
+                <div>
+                  <label>附件（可选）</label>
+                  <input type="file" name="attachment" title="新闻附件">
+                </div>
+                <div>
+                  <label>发布</label>
+                  <div class="hint"><input type="checkbox" name="is_published" title="发布状态"> 勾选即发布</div>
+                </div>
+              </div>
+              <div class="item-actions">
+                <button class="btn" type="submit">创建</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="item-row">
+            <h4 class="card-title">已创建ニュース</h4>
+            {% if news_items and news_items|length > 0 %}
+              {% for n in news_items %}
+                <div class="item-row">
+                  <div class="news-meta">
+                    <span class="badge">ID {{ n.id }}</span>
+                    {% if n.is_published %}<span class="badge">公開中</span>{% else %}<span class="badge">非公開</span>{% endif %}
+                    <span>详情页：<a href="/news/{{ n.id }}" target="_blank">/news/{{ n.id }}</a></span>
+                  </div>
+                  <form method="post" action="/admin/news/update/{{ n.id }}" enctype="multipart/form-data">
+                    <div class="item-fields one">
+                      <div>
+                        <label>标题</label>
+                        <input name="title" value="{{ n.title }}" title="新闻标题" required>
+                      </div>
+                      <div>
+                        <label>正文</label>
+                        <textarea name="body" class="textarea-tall" title="新闻正文">{{ n.body or '' }}</textarea>
+                      </div>
+                      <div class="grid">
+                        <div>
+                          <label>图片</label>
+                          {% if n.image_path %}
+                            <div class="hint"><a href="{{ n.image_path }}" target="_blank">当前图片</a></div>
+                          {% endif %}
+                          <input type="file" name="image" accept="image/*" title="新闻图片">
+                        </div>
+                        <div>
+                          <label>附件</label>
+                          {% if n.file_path %}
+                            <div class="hint"><a href="{{ n.file_path }}" target="_blank">当前附件</a></div>
+                          {% endif %}
+                          <input type="file" name="attachment" title="新闻附件">
+                        </div>
+                        <div>
+                          <label>发布</label>
+                          <div class="hint">
+                            <input type="checkbox" name="is_published" title="发布状态" {% if n.is_published %}checked{% endif %}> 已发布
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="item-actions">
+                      <button class="btn btn-outline" type="submit">保存</button>
+                    </div>
+                  </form>
+                  <form method="post" action="/admin/news/delete/{{ n.id }}" onsubmit="return confirm('确定删除此新闻吗？');">
+                    <div class="item-actions">
+                      <button class="btn btn-danger" type="submit">删除</button>
+                    </div>
+                  </form>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="hint">暂无新闻</div>
+            {% endif %}
           </div>
         </div>
       </details>

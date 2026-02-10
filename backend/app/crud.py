@@ -3,7 +3,7 @@
 """
 import json
 from sqlalchemy.orm import Session
-from .models import HomePage
+from .models import HomePage, News
 from .schemas import HomeUpdate
 
 
@@ -173,3 +173,74 @@ def update_home(db: Session, payload: HomeUpdate) -> HomePage:
     db.commit()
     db.refresh(home)
     return home
+
+
+def list_news(db: Session) -> list[News]:
+    return db.query(News).order_by(News.created_at.desc()).all()
+
+
+def list_published_news(db: Session) -> list[News]:
+    return (
+        db.query(News)
+        .filter(News.is_published.is_(True))
+        .order_by(News.created_at.desc())
+        .all()
+    )
+
+
+def get_news(db: Session, news_id: int) -> News | None:
+    return db.query(News).filter(News.id == news_id).first()
+
+
+def create_news(
+    db: Session,
+    title: str,
+    body: str,
+    image_path: str = "",
+    file_path: str = "",
+    is_published: bool = False,
+) -> News:
+    item = News(
+        title=title.strip(),
+        body=body or "",
+        image_path=image_path or "",
+        file_path=file_path or "",
+        is_published=is_published,
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+def update_news(
+    db: Session,
+    news_id: int,
+    title: str,
+    body: str,
+    image_path: str | None = None,
+    file_path: str | None = None,
+    is_published: bool = False,
+) -> News | None:
+    item = get_news(db, news_id)
+    if not item:
+        return None
+    item.title = title.strip()
+    item.body = body or ""
+    if image_path is not None:
+        item.image_path = image_path
+    if file_path is not None:
+        item.file_path = file_path
+    item.is_published = is_published
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+def delete_news(db: Session, news_id: int) -> bool:
+    item = get_news(db, news_id)
+    if not item:
+        return False
+    db.delete(item)
+    db.commit()
+    return True

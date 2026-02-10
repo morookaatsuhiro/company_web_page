@@ -142,3 +142,9 @@ class ContactRequest(BaseModel):
     company: Optional[str] = None
     email: str
     message: str
+
+
+class NewsPublic(BaseModel):
+    id: int
+    title: str
+    url: str

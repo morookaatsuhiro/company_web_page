@@ -7,13 +7,14 @@ from pathlib import Path
 from fastapi import FastAPI, Depends, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 
 from .db import Base, engine, get_db
-from .crud import get_or_create_home, update_home
-from .schemas import HomePublic, HomeUpdate, ContactRequest
+from .crud import get_or_create_home, update_home, list_published_news, get_news
+from .schemas import HomePublic, HomeUpdate, ContactRequest, NewsPublic
 from .admin_views import router as admin_router
 from .auth import is_logged_in
 from .mail import send_contact_email
@@ -26,6 +27,8 @@ BASE_DIR = Path(__file__).resolve().parents[2]  # 指向 web_page_company 项目
 ENV_PATH = BASE_DIR / "backend" / ".env"
 if ENV_PATH.exists():
     load_dotenv(dotenv_path=str(ENV_PATH))
+TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
@@ -132,6 +135,16 @@ def public_home(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to fetch home data")
 
 
+@app.get("/api/public/news", response_model=list[NewsPublic])
+def public_news(db: Session = Depends(get_db)):
+    """公开 API：获取已发布新闻列表（仅标题与链接）"""
+    items = list_published_news(db)
+    return [
+        NewsPublic(id=item.id, title=item.title, url=f"/news/{item.id}")
+        for item in items
+    ]
+
+
 @app.put("/api/admin/home")
 def admin_update_home(payload: HomeUpdate, request: Request, db: Session = Depends(get_db)):
     """后台 API：更新首页数据（需要登录）"""
@@ -164,6 +177,18 @@ def submit_contact(payload: ContactRequest):
     except Exception as e:
         logger.error(f"Failed to send contact email: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to send email")
+
+
+@app.get("/news/{news_id}", response_class=HTMLResponse)
+def news_detail(news_id: int, request: Request, db: Session = Depends(get_db)):
+    """新闻详情页"""
+    item = get_news(db, news_id)
+    if not item or not item.is_published:
+        raise HTTPException(status_code=404, detail="News not found")
+    return templates.TemplateResponse(
+        "news_detail.html",
+        {"request": request, "news": item}
+    )
 
 
 @app.exception_handler(404)
