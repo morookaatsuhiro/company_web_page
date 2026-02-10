@@ -18,7 +18,7 @@
     .section-body{padding:0 16px 16px;}
     .section-title{display:flex;align-items:center;justify-content:space-between;margin:0;}
     label{font-weight:700;color:#333;font-size:13px;}
-    input,textarea{width:100%;padding:10px 12px;border:1px solid #d6dbe6;border-radius:12px;margin-top:6px;background:#fff;}
+    input,textarea{width:100%;padding:10px 12px;border:1px solid #d6dbe6;border-radius:12px;margin-top:6px;background:#fff;box-sizing:border-box;}
     input:focus,textarea:focus{outline:none;border-color:#0f5ea6;box-shadow:0 0 0 3px rgba(15,94,166,.12);}
     textarea{min-height:92px;resize:vertical;}
     textarea.textarea-tall{min-height:160px;}
@@ -40,6 +40,31 @@
     .news-wrap{margin-top:18px;}
     .news-meta{display:flex;gap:8px;align-items:center;font-size:12px;color:#6b7280;}
     .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#3f51b5;font-weight:700;font-size:11px;}
+    .news-create{background:#fff;border:1px solid #dfe7f3;}
+    .news-create-title{margin:0 0 4px;font-size:18px;color:#1f2a37;}
+    .news-create-subtitle{margin:0 0 12px;color:#667085;font-size:13px;}
+    .news-create-grid{display:block;}
+    .news-main-fields{display:grid;grid-template-columns:1fr;gap:12px;}
+    .news-side-panel{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+    .news-upload-card{
+      border:1px solid #dbe5f3;
+      border-radius:10px;
+      background:#f9fbff;
+      padding:10px;
+    }
+    .news-upload-card label{display:block;margin-bottom:4px;}
+    .news-publish-check{display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;}
+    .news-publish-check input[type="checkbox"]{width:auto;margin:0;}
+    .news-create .item-actions{margin-top:12px;justify-content:flex-start;}
+    .news-item{background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);}
+    @media (max-width: 900px){
+      .news-side-panel{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
@@ -254,27 +279,34 @@
         <div class="section-body">
           <div class="hint">主页只显示已发布新闻标题，点击进入详情页。</div>
           <div class="item-row news-create">
-            <h4 class="card-title">新建ニュース</h4>
-            <div class="grid">
-              <div class="full">
+            <h4 class="news-create-title">新建ニュース</h4>
+            <p class="news-create-subtitle">先完成标题和正文，再设置图片、附件和发布状态。</p>
+            <div class="news-create-grid">
+              <div class="news-main-fields">
+                <div>
                 <label>标题</label>
                 <input name="title" placeholder="例：展示会出展のお知らせ" title="新闻标题">
-              </div>
-              <div class="full">
+                </div>
+                <div>
                 <label>正文</label>
                 <textarea name="body" class="textarea-tall" placeholder="这里输入正文内容" title="新闻正文"></textarea>
+                <div class="hint">建议首段概述核心信息，后续分段补充时间、地点、对象与联系方式。</div>
               </div>
-              <div>
+              </div>
+            </div>
+            <div class="news-side-panel">
+              <div class="news-upload-card">
                 <label>图片（可选）</label>
                 <input type="file" name="image" accept="image/*" title="新闻图片">
               </div>
-              <div>
+              <div class="news-upload-card">
                 <label>附件（可选）</label>
                 <input type="file" name="attachment" title="新闻附件">
               </div>
-              <div>
-                <label>发布</label>
-                <div class="hint"><input type="checkbox" name="is_published" title="发布状态"> 勾选即发布</div>
+              <div class="news-upload-card">
+                <label>发布状态</label>
+                <label class="news-publish-check"><input type="checkbox" name="is_published" title="发布状态"> 立即发布</label>
+                <div class="hint">未勾选将保存为草稿，可在下方列表中再编辑并发布。</div>
               </div>
             </div>
             <div class="item-actions">
@@ -730,40 +762,42 @@
     };
 
     document.addEventListener("click", (e) => {
-      const target = e.target;
-      if (target.matches("[data-add-service]")) {
+      const el = e.target instanceof Element ? e.target : null;
+      if (!el) return;
+
+      if (el.closest("[data-add-service]")) {
         addItem("servicesList", "serviceItemTpl");
       }
-      if (target.matches("[data-add-strength]")) {
+      if (el.closest("[data-add-strength]")) {
         addItem("strengthsList", "strengthItemTpl");
       }
-      if (target.matches("[data-add-hero-stat]")) {
+      if (el.closest("[data-add-hero-stat]")) {
         addItem("heroStatsList", "heroStatItemTpl");
       }
-      if (target.matches("[data-add-concept-point]")) {
+      if (el.closest("[data-add-concept-point]")) {
         addItem("conceptPointsList", "conceptPointTpl");
       }
-      if (target.matches("[data-add-contact-example]")) {
+      if (el.closest("[data-add-contact-example]")) {
         addItem("contactExamplesList", "contactExampleTpl");
       }
-      if (target.matches("[data-remove]")) {
-        const row = target.closest(".item-row");
+      if (el.closest("[data-remove]")) {
+        const row = el.closest(".item-row");
         if (row) row.remove();
       }
-      if (target.matches("[data-news-create]")) {
-        const root = target.closest(".news-create");
+      if (el.closest("[data-news-create]")) {
+        const root = el.closest(".news-create");
         if (!root) return;
         submitNewsForm("/admin/news/create", root);
       }
-      if (target.matches("[data-news-update]")) {
-        const root = target.closest(".news-item");
+      if (el.closest("[data-news-update]")) {
+        const root = el.closest(".news-item");
         if (!root) return;
         const id = root.getAttribute("data-news-id");
         if (!id) return;
         submitNewsForm(`/admin/news/update/${id}`, root);
       }
-      if (target.matches("[data-news-delete]")) {
-        const root = target.closest(".news-item");
+      if (el.closest("[data-news-delete]")) {
+        const root = el.closest(".news-item");
         if (!root) return;
         const id = root.getAttribute("data-news-id");
         if (!id) return;
